@@ -12,10 +12,9 @@ from config import ConfigParams
 import json
 
 def get_revision_count(pagename):
-    /{project}/{article}/{format}
     PROJECT = "something"
-    F = "soemethig"
-
+    F = "soeme"
+    
     
 
 def get_page_revisions(pagename):
@@ -34,10 +33,10 @@ def get_page_revisions(pagename):
         "format": "json"
     }
 
-    R = S.get(url=URL, params=REQ_PARAMS)
-    DATA = R.json()
+    req = S.get(url=URL, params=REQ_PARAMS)
+    res = req.json()
 
-    PAGES = DATA["query"]["pages"]
+    PAGES = res["query"]["pages"]
 
     for page in PAGES:
         print(json.dumps(page["revisions"], indent=4, sort_keys=True))
