@@ -52,8 +52,10 @@ app.include_router(
 
 # Endpoints
 @app.get("/")
-def root():
-    return {"message":"Amalthea API"}
+def root(user: User = Depends(Auth.fastapi_users.current_user())):
+    return {"message":"Amalthea API - welcome {username}".format(
+        username = user.id
+    )}
 
 @app.post("/verify", status_code=200)
 async def verify(user: User = Depends(Auth.fastapi_users.current_user())):

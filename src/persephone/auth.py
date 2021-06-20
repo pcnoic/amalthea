@@ -15,7 +15,8 @@ class Auth:
     jwt_authentication = JWTAuthentication(
         secret=SECRET, lifetime_seconds=3600, tokenUrl="auth/jwt/login"
     ) 
-    
+
+    auth_backends.append(jwt_authentication)    
 
     client = motor.motor_asyncio.AsyncIOMotorClient(
         ConfigParams.MONGODB_HOST, uuidRepresentation="standard"
