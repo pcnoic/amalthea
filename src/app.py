@@ -10,9 +10,9 @@ from fastapi import FastAPI, Depends, Response, APIRouter
 # Relative modules
 sys.path.insert(1, '../')
 from persephone.auth import Auth
-from persephone.wikimedia_auth import WikimediaAuth
+from persephone.wikimedia_auth import WikimediaAuth, verify_wikiId
 from hermes.revisions import Revisions
-from models.user import User
+from models.user import User, WikiUser
 
 app = FastAPI()
 router = APIRouter()
@@ -58,8 +58,8 @@ def root(user: User = Depends(Auth.fastapi_users.current_user())):
     )}
 
 @app.post("/verify", status_code=200)
-async def verify(user: User = Depends(Auth.fastapi_users.current_user())):
-        return WikimediaAuth.verify_wikiId(user.id)
+async def verify(user: WikiUser):
+        return verify_wikiId(user.username, user.password)
 
 @app.get("/revisions/{article_id}/get", status_code=200)
 def get_article_revisions(article_id: str, response: Response):

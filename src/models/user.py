@@ -2,6 +2,7 @@
     Defining Amalthea User models.
 """
 from fastapi_users import models
+from pydantic import BaseModel
 
 class User(models.BaseUser):
     username: str
@@ -17,3 +18,7 @@ class UserUpdate(models.BaseUserUpdate):
 
 class UserDB(User, models.BaseUserDB):
     username: str
+    
+class WikiUser(BaseModel):
+    username: str
+    password: str
