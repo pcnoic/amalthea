@@ -1,10 +1,9 @@
 """
     Defining Amalthea User models.
 """
-from config import ConfigParams
-from fastapi import FastAPI
 from fastapi_users import models
 from fastapi_users.db import MongoDBUserDatabase
+from pydantic.main import BaseModel
 
 
 class User(models.BaseUser):

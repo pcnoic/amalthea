@@ -6,48 +6,52 @@ import requests
 from config import ConfigParams
 
 
-"""
-    Fetches an API action token.
-    Most common token type: login
-    See more: https://www.mediawiki.org/wiki/API:Tokens
-"""
-def get_API_token(type):
-    S = requests.session()
-    URL = ConfigParams.WIKIPEDIA_API_URL
+class WikimediaAuth:
 
-    PARAMS = {
-        "action":"query",
-        "meta": "tokens",
-        "type": "login",
-        "format": "json"
-    }
+    """
+        Fetches an API action token.
+        Most common token type: login
+        See more: https://www.mediawiki.org/wiki/API:Tokens
+    """
+    def get_API_token():
+        S = requests.session()
+        URL = ConfigParams.WIKIPEDIA_API_URL
 
-    req = S.get(url=URL, params=PARAMS)
-    res = req.json()
+        PARAMS = {
+            "action":"query",
+            "meta": "tokens",
+            "type": "login",
+            "format": "json"
+        }
 
-    return res["query"]["tokens"]["logintoken"]
+        req = S.get(url=URL, params=PARAMS)
+        res = req.json()
 
-"""
-    Sending post request to login.
-    Requires API:Token of type 'login'
-"""
-def get_login(token):
-    S = requests.Session()
-    URL = ConfigParams.WIKIPEDIA_API_URL
+        return res["query"]["tokens"]["logintoken"]
 
-    PARAMS = {
-        "action":"login",
-        "lgname":"your_bot_username",
-        "lgpassword":"your_bot_password",
-        "lgtoken":token,
-        "format":"json"
-    }
+    """
+        Sending post request to login.
+        Requires API:Token of type 'login'
+    """
+    def get_login(token):
+        S = requests.Session()
+        URL = ConfigParams.WIKIPEDIA_API_URL
 
-    req = S.post(URL, data=PARAMS)
-    res = req.json()
+        PARAMS = {
+            "action":"login",
+            "lgname":"your_bot_username",
+            "lgpassword":"your_bot_password",
+            "lgtoken":token,
+            "format":"json"
+        }
 
-    print(res)
+        req = S.post(URL, data=PARAMS)
+        res = req.json()
 
-"""
-    Identity Verifier
-"""
+        print(res)
+
+    """
+        Identity Verifier
+    """
+    def verify_wikiId(username):
+        print(username)

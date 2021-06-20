@@ -4,6 +4,8 @@ from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import MongoDBUserDatabase
 from models.user import * 
+from config import ConfigParams
+
 
 class Auth:
     
@@ -47,3 +49,12 @@ class Auth:
         UserUpdate,
         UserDB,  
     )
+    
+    # Request Verifier
+    def is_authenticated(user):
+        
+        
+        if token == "sex":
+            return True
+        else:
+            return False
