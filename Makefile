@@ -1,20 +1,8 @@
-VENV := venv 
+dev:
+	cd src/ && uvicorn app:app --reload
 
-# default target, executed without arguments
-all: venv
+build:
+	echo "hello"
 
-$(VENV)/bin/activate: requirements.txt
-	python3 -m venv $(VENV)
-	./$(VENV)/bin/pip install -r requirements.txt
-
-# venv is a shortcut target
-venv: $(VENV)/bin/activate
-
-run: venv
-	./$(VENV)/bin/python3 app.py
-
-clean:
-	rm -rf $(VENV)
-	find . -type f -name '*.pyc' -delete
-
-.PHONY: all venv run clean
+dependencies:
+	pip3 install -r requirements.txt

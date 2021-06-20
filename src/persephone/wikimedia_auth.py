@@ -1,5 +1,5 @@
 """
-    OAuth owner-only consumers
+    OAuth owner-only consumers authenticating against WikiPedia's API
 """
 
 import requests
@@ -47,3 +47,7 @@ def get_login(token):
     res = req.json()
 
     print(res)
+
+"""
+    Identity Verifier
+"""
