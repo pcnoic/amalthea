@@ -4,13 +4,14 @@
     GNU GENERAL PUBLIC LICENSE
 """
 import sys
-from fastapi import FastAPI, Depends, Response, APIRouter
+from typing import Optional
+from fastapi import FastAPI, Depends, Response, APIRouter, Cookie
 
 
 # Relative modules
 sys.path.insert(1, '../')
 from persephone.auth import Auth
-from persephone.wikimedia_auth import WikimediaAuth, verify_wikiId
+from persephone.wikimedia_auth import get_wikiId
 from hermes.revisions import Revisions
 from models.user import User, WikiUser
 
@@ -57,10 +58,28 @@ def root(user: User = Depends(Auth.fastapi_users.current_user())):
         username = user.id
     )}
 
+@app.post("/get-wiki-id", status_code=200)
+async def get_wiki_id(user: WikiUser, response: Response):
+    response.set_cookie(
+        key="am_wikiID", 
+        value=get_wikiId(user.username, user.password),
+        httponly=True,
+        expires=60,
+        samesite="Strict"    
+    )
+    return {"message":"Come to the dark side, we have cookies."}
+    
 @app.post("/verify", status_code=200)
-async def verify(user: WikiUser):
-        return verify_wikiId(user.username, user.password)
-
-@app.get("/revisions/{article_id}/get", status_code=200)
-def get_article_revisions(article_id: str, response: Response):
-    return Revisions.get_own_revisions(article_id)
+async def verify(am_wikiID: Optional[str] = Cookie(None), user: User = Depends(Auth.fastapi_users.current_user())):
+    print(am_wikiID)
+    print(user.username)
+    if user.username == am_wikiID:
+        return {"message":"successful"}
+    else:
+        return {"message":"failed"}
+    
+# 
+# @app.get("/revisions/{article_id}/get", status_code=200)
+# def get_article_revisions(article_id: str, response: Response):
+    # return Revisions.get_own_revisions(article_id)
+# 

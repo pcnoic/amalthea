@@ -69,8 +69,11 @@ class WikimediaAuth:
 """
     Identity Verifier
 """
-def verify_wikiId(username, password):
+def get_wikiId(username, password):
     wikimedia_auth = WikimediaAuth()
     wiki_user = wikimedia_auth.start_client_login(username, password)
-    print(wiki_user)
+    if wiki_user != 1:
+        return wiki_user
+    else:
+        return 1
         
