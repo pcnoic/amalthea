@@ -6,6 +6,7 @@ from fastapi import responses
 from fastapi_users import user
 import requests
 from config import ConfigParams
+import json
 
 
 class WikimediaAuth:
@@ -31,7 +32,8 @@ class WikimediaAuth:
             'format': "json"
         })
         
-        data = response.json()
+        # print(response.content)
+        data = json.loads(response.content)
         
         if data['clientlogin']['status'] == 'PASS':
             # Handle success
