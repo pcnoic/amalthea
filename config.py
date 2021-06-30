@@ -6,6 +6,7 @@
     GNU GENERAL PUBLIC LICENSE
 """
 
+# TODO: make this read params from environment variables
 class ConfigParams:
     WIKIPEDIA_API_URL = "https://en.wikipedia.org/w/api.php"
     WIKIPEDIA_DOMAIN = "en.wikipedia.org"
@@ -14,4 +15,5 @@ class ConfigParams:
     MONGODB_DBNAME = "xenia"
     MAX_WIKIPEDIA_REV = 500
     HMAC_SIGN_KEY = "xenia"
+    
     
