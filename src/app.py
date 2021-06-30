@@ -18,7 +18,7 @@ from hermes.revisions import Revisions
 from models.user import User, WikiUser
 from persephone.crypto import Cookie
 
-
+# Application controllers
 app = FastAPI()
 router = APIRouter()
 cookie_manager = Cookie()
@@ -56,7 +56,8 @@ app.include_router(
     tags=["user"]
 )
 
-# Endpoints
+###### Endpoints
+# Identity
 @app.get("/")
 def root(user: User = Depends(Auth.fastapi_users.current_user())):
     return {"message":"Amalthea API - welcome {username}".format(
@@ -78,20 +79,32 @@ async def get_wiki_id(user: WikiUser, response: Response):
     return {"message":"Come to the dark side, we have cookies."}
     
 @app.post("/verify", status_code=200)
-async def verify(am_wikiID: Optional[str] = FC(None), user: User = Depends(Auth.fastapi_users.current_user())):
+async def verify(response: Response, am_wikiID: Optional[str] = FC(None), user: User = Depends(Auth.fastapi_users.current_user())):
     verifiable = cookie_manager.sign(user.username)
     print(verifiable)
     if bool(am_wikiID):
         cookie_split = am_wikiID.split(";")
         print(cookie_split[1])
         if verifiable == cookie_split[1]:
+            response.delete_cookie(
+                key="am_wikiID"
+            )
             return {"message":"successful"}
         else:
+            response.delete_cookie(
+                key="am_wikiID"
+            )
             return {"message":"failed"}
     else:
         return {"message":"cookie is missing"}
-# 
-# @app.get("/revisions/{article_id}/get", status_code=200)
-# def get_article_revisions(article_id: str, response: Response):
-    # return Revisions.get_own_revisions(article_id)
-# 
+
+
+# WikiPedia Revisions
+@app.get("/articles/{keyword}/get", status_code=200)
+def get_articles(keyword: str, response: Response, user: User = Depends(Auth.fastapi_users.current_user())):
+    return Revisions.search_wiki(keyword)
+
+@app.get("/articles/revisions/{pageid}/get", status_code=200)
+def get_article_revisions(pageid: str, response: Response, user: User = Depends(Auth.fastapi_users.current_user())):
+    return Revisions.get_own_revisions(user.username, pageid)
+
