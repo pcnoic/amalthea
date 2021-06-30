@@ -13,3 +13,5 @@ class ConfigParams:
     MONGODB_HOST = "mongodb://localhost:27017" # MongoDB host: can also have basic auth
     MONGODB_DBNAME = "xenia"
     MAX_WIKIPEDIA_REV = 500
+    HMAC_SIGN_KEY = "xenia"
+    
