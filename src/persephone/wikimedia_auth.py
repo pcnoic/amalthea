@@ -37,7 +37,7 @@ class WikimediaAuth:
         
         if data['clientlogin']['status'] == 'PASS':
             # Handle success
-            print("Successful login for WikiPedia user {user}".format(
+            print("Successful login on WikiPedia user {user}".format(
                 user = data['clientlogin']['username']
             ))
             return data['clientlogin']['username']

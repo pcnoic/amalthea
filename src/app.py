@@ -5,7 +5,9 @@
 """
 import sys
 from typing import Optional
-from fastapi import FastAPI, Depends, Response, APIRouter, Cookie
+from fastapi import FastAPI, Depends, Response, APIRouter
+from fastapi import Cookie as FC
+import fastapi
 
 
 # Relative modules
@@ -14,9 +16,12 @@ from persephone.auth import Auth
 from persephone.wikimedia_auth import get_wikiId
 from hermes.revisions import Revisions
 from models.user import User, WikiUser
+from persephone.crypto import Cookie
+
 
 app = FastAPI()
 router = APIRouter()
+cookie_manager = Cookie()
 
 # Routers
 app.include_router(
@@ -60,9 +65,12 @@ def root(user: User = Depends(Auth.fastapi_users.current_user())):
 
 @app.post("/get-wiki-id", status_code=200)
 async def get_wiki_id(user: WikiUser, response: Response):
+    wiki_id = get_wikiId(user.username, user.password)
+    cookie_hmac_signature = cookie_manager.sign(wiki_id)
+    cookie_value = wiki_id + ";" + cookie_hmac_signature 
     response.set_cookie(
         key="am_wikiID", 
-        value=get_wikiId(user.username, user.password),
+        value=cookie_value,
         httponly=True,
         expires=60,
         samesite="Strict"    
@@ -70,14 +78,18 @@ async def get_wiki_id(user: WikiUser, response: Response):
     return {"message":"Come to the dark side, we have cookies."}
     
 @app.post("/verify", status_code=200)
-async def verify(am_wikiID: Optional[str] = Cookie(None), user: User = Depends(Auth.fastapi_users.current_user())):
-    print(am_wikiID)
-    print(user.username)
-    if user.username == am_wikiID:
-        return {"message":"successful"}
+async def verify(am_wikiID: Optional[str] = FC(None), user: User = Depends(Auth.fastapi_users.current_user())):
+    verifiable = cookie_manager.sign(user.username)
+    print(verifiable)
+    if bool(am_wikiID):
+        cookie_split = am_wikiID.split(";")
+        print(cookie_split[1])
+        if verifiable == cookie_split[1]:
+            return {"message":"successful"}
+        else:
+            return {"message":"failed"}
     else:
-        return {"message":"failed"}
-    
+        return {"message":"cookie is missing"}
 # 
 # @app.get("/revisions/{article_id}/get", status_code=200)
 # def get_article_revisions(article_id: str, response: Response):
