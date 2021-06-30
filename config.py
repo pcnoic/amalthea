@@ -13,7 +13,7 @@ class ConfigParams:
     XTOOLS_API_URL = "https://xtools.wmflabs.org/api/page/articleinfo"
     MONGODB_HOST = "mongodb://localhost:27017" # MongoDB host: can also have basic auth
     MONGODB_DBNAME = "xenia"
-    MAX_WIKIPEDIA_REV = 500
+    MAX_WIKIPEDIA_REV = 1000
     HMAC_SIGN_KEY = "xenia"
     
     
