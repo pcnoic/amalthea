@@ -7,16 +7,14 @@
 
     GNU GENERAL PUBLIC LICENSE
 """
+from re import X
 from fastapi_users import user
 import requests
+from requests.exceptions import URLRequired
 from config import ConfigParams
 import json
 
 class Revisions:
-
-    def get_revision_count(pagename):
-        PROJECT = "something"
-        F = ""
 
 
     def search_wiki(searchterm):
@@ -82,3 +80,25 @@ class Revisions:
             
 
         return {"results":USER_REVISIONS}
+
+    def get_revision_content(revid):
+        S = requests.Session()
+        
+        # Fetch content of revision
+        REQ_PARAMS = {
+            "action":"query",
+            "prop":"revisions",
+            "rvprop":"content",
+            "format":"json",
+            "formatrevision":"2",
+            "revids":revid
+        }
+        
+        req = S.get(url=ConfigParams.WIKIPEDIA_API_URL, params=REQ_PARAMS)
+        res = req.json()
+        
+         
+        
+        print(res)
+        
+        

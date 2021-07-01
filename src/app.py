@@ -108,3 +108,6 @@ def get_articles(keyword: str, response: Response, user: User = Depends(Auth.fas
 def get_article_revisions(pageid: str, response: Response, user: User = Depends(Auth.fastapi_users.current_user())):
     return Revisions.get_own_revisions(user.username, pageid)
 
+@app.get("/articles/revisions/content/{revid}/get", status_code=200)
+def get_revision_content(revid: str, response: Response, user: User = Depends(Auth.fastapi_users.current_user())):
+    return Revisions.get_revision_content(revid)
