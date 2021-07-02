@@ -20,5 +20,4 @@ class UserDB(User, models.BaseUserDB):
     username: str
     
 class WikiUser(BaseModel):
-    username: str
     password: str

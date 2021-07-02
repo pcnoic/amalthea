@@ -63,10 +63,10 @@ def root(user: User = Depends(Auth.fastapi_users.current_user())):
     return {"message":"Amalthea API - welcome {username}".format(
         username = user.id
     )}
-
+ 
 @app.post("/get-wiki-id", status_code=200)
-async def get_wiki_id(user: WikiUser, response: Response):
-    wiki_id = get_wikiId(user.username, user.password)
+async def get_wiki_id(wikiuser: WikiUser, response: Response, user: User = Depends(Auth.fastapi_users.current_user())):
+    wiki_id = get_wikiId(user.username, wikiuser.password)
     cookie_hmac_signature = cookie_manager.sign(wiki_id)
     cookie_value = wiki_id + ";" + cookie_hmac_signature 
     response.set_cookie(
