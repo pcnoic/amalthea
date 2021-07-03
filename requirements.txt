@@ -3,3 +3,4 @@ fastapi
 python-multipart
 fastapi-users[mongodb]
 uvicorn
+ipfs-api
