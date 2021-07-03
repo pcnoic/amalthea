@@ -16,6 +16,7 @@ from persephone.auth import Auth
 from persephone.wikimedia_auth import get_wikiId
 from hermes.revisions import Revisions
 from models.user import User, WikiUser
+from models.revision import WikiRevision
 from persephone.crypto import Cookie
 
 # Application controllers
@@ -108,6 +109,11 @@ def get_articles(keyword: str, response: Response, user: User = Depends(Auth.fas
 def get_article_revisions(pageid: str, response: Response, user: User = Depends(Auth.fastapi_users.current_user())):
     return Revisions.get_own_revisions(user.username, pageid)
 
-@app.get("/articles/revisions/content/{revid}/get", status_code=200)
-def get_revision_content(revid: str, response: Response, user: User = Depends(Auth.fastapi_users.current_user())):
-    return Revisions.get_revision_content(revid)
+@app.get("/articles/revisions/content/{pageid}/{revid}/get", status_code=200)
+def get_revision_content(pageid: str, revid: str, response: Response, user: User = Depends(Auth.fastapi_users.current_user())):
+    return Revisions.get_revision_content(pageid, revid)
+
+# Encoding 
+@app.post("/articles/revisions/encode", status_code=200)
+def encode_revision_content(wikirevision: WikiRevision, response: Response, user: User = Depends(Auth.fastapi_users.current_user())):
+    return Revisions.encode_revision_content(wikirevision.content)

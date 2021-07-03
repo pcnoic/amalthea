@@ -7,12 +7,11 @@
 
     GNU GENERAL PUBLIC LICENSE
 """
-from re import X
-from fastapi_users import user
 import requests
-from requests.exceptions import URLRequired
 from config import ConfigParams
+import base64
 import json
+
 
 class Revisions:
 
@@ -81,11 +80,11 @@ class Revisions:
 
         return {"results":USER_REVISIONS}
 
-    def get_revision_content(revid):
+    def get_revision_content(pageid, revid):
         S = requests.Session()
         
         # Fetch content of revision
-        REQ_PARAMS = {
+        FETCH_REQ_PARAMS = {
             "action":"query",
             "prop":"revisions",
             "rvprop":"content",
@@ -94,10 +93,35 @@ class Revisions:
             "revids":revid
         }
         
-        req = S.get(url=ConfigParams.WIKIPEDIA_API_URL, params=REQ_PARAMS)
-        res = req.json()
+        fetch_req = S.get(url=ConfigParams.WIKIPEDIA_API_URL, params=FETCH_REQ_PARAMS)
+        fetch_res = fetch_req.json()
         
-         
         
-        print(res)
+        CONTENT = fetch_res["query"]["pages"][pageid]["revisions"][0]["*"]
+        #print(CONTENT)
+
+        PARSE_REQ_PARAMS = {
+            "action":"parse",
+            "prop":"text|links|images|externallinks",
+            "format":"json",
+            "contentmodel": "wikitext",
+            "text": CONTENT
+        }
+
+        parse_req = S.get(url=ConfigParams.WIKIPEDIA_API_URL, params=PARSE_REQ_PARAMS)
+        parse_res = parse_req.json()
         
+        return(parse_res)
+
+    def encode_revision_content(content):
+        content = json.dumps(content)
+        
+        # The most copied part of code in the internet, apart from print("Hello World")
+        content_bytes = content.encode('ascii')
+        b64_bytes = base64.b64encode(content_bytes)
+        b64_content = b64_bytes.decode('ascii')
+
+        return {"content":b64_content}
+        
+    def decode_revision_content(content):
+        print(content)
